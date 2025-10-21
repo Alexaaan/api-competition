@@ -19,7 +19,7 @@ export class AuthService {
     const user = await this.usersService.create({
       ...dto,
       password: hashed,
-      role: 'player',
+      role: dto.role || 'user',
     });
     return { message: 'Utilisateur créé', user };
   }

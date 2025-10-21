@@ -15,7 +15,7 @@ export class User {
   @Column()
   password: string;
 
-  @Column({ default: 'player' })
+  @Column({ default: 'user' })
   role: string;
 
   @OneToMany(() => Match, match => match.user1)

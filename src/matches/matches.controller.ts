@@ -2,6 +2,10 @@ import { Controller, Get, Post, Patch, Delete, Param, Body } from '@nestjs/commo
 import { MatchesService } from './matches.service';
 import { CreateMatchDto } from './dto/create-match.dto';
 import { UpdateMatchDto } from './dto/update-match.dto';
+import { UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { RolesGuard } from '../auth/roles.guard';
+import { Roles } from '../auth/roles.decorator';
 
 @Controller('matches')
 export class MatchesController {
@@ -27,8 +31,10 @@ export class MatchesController {
     return this.matchesService.update(+id, dto);
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
   @Delete(':id')
   remove(@Param('id') id: number) {
-    return this.matchesService.remove(+id); // admin only (à protéger plus tard)
-  }
+    return this.matchesService.remove(+id);
+}
 }

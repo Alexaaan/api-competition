@@ -38,4 +38,5 @@ export class AuthController {
   passwordReset(@Body() dto: PasswordResetDto) {
     return this.authService.passwordReset(dto.email);
   }
+  
 }
