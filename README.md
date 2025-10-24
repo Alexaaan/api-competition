@@ -1,98 +1,152 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 🏆 API Competition
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+API REST développée avec **NestJS** permettant de gérer des utilisateurs, des matchs et l’authentification via JWT.  
+Le projet a pour objectif de proposer une base solide pour un système de compétition avec gestion des rôles et documentation automatique via **Swagger**.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+---
 
-## Description
+## 📘 Description de l’API
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+L’API est construite sur le framework **NestJS** et offre plusieurs modules :
 
-## Project setup
+| Module | Fichier principal | Description |
+|--------|-------------------|-------------|
+| Auth | [`AuthModule`](src/auth/auth.module.ts) ([src/auth/auth.module.ts](src/auth/auth.module.ts)) | Gestion de l’authentification (register, login, logout, refresh, password-reset). Voir [`AuthController`](src/auth/auth.controller.ts) et [`AuthService`](src/auth/auth.service.ts). |
+| Users | [`UsersModule`](src/users/users.module.ts) ([src/users/users.module.ts](src/users/users.module.ts)) | CRUD pour les utilisateurs (protégé par JWT & rôles). Voir [`UsersController`](src/users/users.controller.ts) et [`UsersService`](src/users/users.service.ts). |
+| Matches | [`MatchesModule`](src/matches/matches.module.ts) ([src/matches/matches.module.ts](src/matches/matches.module.ts)) | Création et gestion des matchs entre utilisateurs. Voir [`MatchesController`](src/matches/matches.controller.ts) et [`MatchesService`](src/matches/matches.service.ts). |
+| Swagger | Configuration dans [`main.ts`](src/main.ts) ([src/main.ts](src/main.ts)) | Documentation automatique disponible sur `/api/docs` en développement. |
 
+Sécurité / authentification :
+- Basée sur **JWT (JSON Web Token)** via [`JwtStrategy`](src/auth/jwt.strategy.ts).
+- Garde d’authentification : [`JwtAuthGuard`](src/auth/jwt-auth.guard.ts).
+- Gestion des rôles : décorateur [`Roles`](src/auth/roles.decorator.ts) et garde [`RolesGuard`](src/auth/roles.guard.ts).
+- Les routes nécessitant un token sont annotées avec `@ApiBearerAuth()` et protégées par les guards.
+
+---
+
+## ⚙️ Caractéristiques principales
+
+- Enregistrement / connexion des utilisateurs (hashage des mots de passe avec bcrypt).
+- Refresh token simple en mémoire (implémenté dans [`AuthService`](src/auth/auth.service.ts)).
+- CRUD utilisateurs, avec protection par rôles (`admin`).
+- CRUD matchs entre utilisateurs.
+- Base de données SQLite (fichier `competition.db` par défaut) avec TypeORM.
+- Documentation Swagger disponible en développement sur `/api/docs`.
+
+---
+
+## 🧾 Prérequis
+
+- Node.js >= 18
+- npm ou yarn
+
+---
+
+## 🚀 Installation & Lancement
+
+1. Cloner le dépôt
 ```bash
-$ npm install
+git clone https://github.com/Aleexaan/api-competition.git
+cd api-competition
 ```
 
-## Compile and run the project
-
+2. Installer les dépendances
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm install
+# ou
+# yarn
 ```
 
-## Run tests
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+3. Variables d’environnement (optionnel)
+- Par défaut l’application utilise `competition.db` comme base sqlite et `SECRET_KEY` comme secret JWT si `JWT_SECRET` non défini.
+- Exemple de fichier `.env` :
+```env
+PORT=3000
+JWT_SECRET=ma_cle_secrete
+NODE_ENV=development
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
+4. Lancer l’application
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+npm run start:dev
+# ou en production
+npm run build
+npm run start:prod
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+La doc Swagger sera disponible sur http://localhost:3000/api/docs en environnement non-production (configurée dans [`src/main.ts`](src/main.ts)).
 
-## Resources
+---
 
-Check out a few resources that may come in handy when working with NestJS:
+## 🧪 Tests
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+- Lancer les tests unitaires :
+```bash
+npm test
+```
 
-## Support
+- Lancer les tests end-to-end (e2e) :
+```bash
+npm run test:e2e
+```
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+Les tests et la configuration jest se trouvent dans [`package.json`](package.json) et [`test/jest-e2e.json`](test/jest-e2e.json).
 
-## Stay in touch
+---
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+## 📚 Endpoints principaux (récapitulatif)
 
-## License
+Auth
+- POST /auth/register — enregistrement ([`AuthController.register`](src/auth/auth.controller.ts))
+- POST /auth/login — connexion, retourne access_token + refresh_token ([`AuthController.login`](src/auth/auth.controller.ts))
+- POST /auth/logout — déconnexion (requiert JWT) ([`AuthController.logout`](src/auth/auth.controller.ts))
+- POST /auth/refresh — rafraîchir access token ([`AuthController.refresh`](src/auth/auth.controller.ts))
+- POST /auth/password-reset — demande de réinitialisation ([`AuthController.passwordReset`](src/auth/auth.controller.ts))
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Users
+- GET /users — liste des utilisateurs (admin seulement, voir [`UsersController`](src/users/users.controller.ts))
+- GET /users/:id — récupérer utilisateur par id
+- PATCH /users/:id — mettre à jour utilisateur
+- DELETE /users/:id — supprimer utilisateur
+
+Matches
+- POST /matches — créer un match ([`MatchesController.create`](src/matches/matches.controller.ts))
+- GET /matches — lister les matchs
+- GET /matches/:id — récupérer match par id
+- PATCH /matches/:id — mettre à jour match
+- DELETE /matches/:id — supprimer match (réservé admin)
+
+---
+
+## 🧩 Structure du projet
+
+- src/
+  - app.module.ts — point d’entrée du module ([`AppModule`](src/app.module.ts))
+  - main.ts — bootstrap + Swagger ([src/main.ts](src/main.ts))
+  - auth/ — tout ce qui concerne l’authentification ([src/auth](src/auth))
+  - users/ — gestion des utilisateurs ([src/users](src/users))
+  - matches/ — gestion des matchs ([src/matches](src/matches))
+
+---
+
+## 🛠️ Développement & bonnes pratiques
+
+- Format : `npm run format`
+- Lint : `npm run lint`
+- Build : `npm run build`
+
+Notes :
+- La gestion des refresh tokens est ici en mémoire (Map) pour simplicité. En production, stocker les refresh tokens de manière persistante (DB, Redis, …).
+- Synchronize=true dans TypeORM (voir [`AppModule`](src/app.module.ts)) permet la création automatique des tables en développement. Pensez à désactiver en production et utiliser des migrations.
+
+---
+
+## 🤝 Contribution
+
+Contributions bienvenues. Ouvrez une issue ou une PR pour proposer des améliorations (ex : persistance des refresh tokens, tests supplémentaires, migrations TypeORM).
+
+---
+
+## 📄 Licence
+
+Projet fourni tel quel (voir `package.json` pour les informations de licence).
