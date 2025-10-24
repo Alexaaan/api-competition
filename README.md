@@ -5,22 +5,37 @@ Le projet a pour objectif de proposer une base solide pour un système de compé
 
 ---
 
-## 📘 Description de l’API
+## 📘 Description de l'API
 
-L’API est construite sur le framework **NestJS** et offre plusieurs modules :
+Cette API REST construite avec **NestJS** s'articule autour de 3 modules principaux :
 
-| Module | Fichier principal | Description |
-|--------|-------------------|-------------|
-| Auth | [`AuthModule`](src/auth/auth.module.ts) ([src/auth/auth.module.ts](src/auth/auth.module.ts)) | Gestion de l’authentification (register, login, logout, refresh, password-reset). Voir [`AuthController`](src/auth/auth.controller.ts) et [`AuthService`](src/auth/auth.service.ts). |
-| Users | [`UsersModule`](src/users/users.module.ts) ([src/users/users.module.ts](src/users/users.module.ts)) | CRUD pour les utilisateurs (protégé par JWT & rôles). Voir [`UsersController`](src/users/users.controller.ts) et [`UsersService`](src/users/users.service.ts). |
-| Matches | [`MatchesModule`](src/matches/matches.module.ts) ([src/matches/matches.module.ts](src/matches/matches.module.ts)) | Création et gestion des matchs entre utilisateurs. Voir [`MatchesController`](src/matches/matches.controller.ts) et [`MatchesService`](src/matches/matches.service.ts). |
-| Swagger | Configuration dans [`main.ts`](src/main.ts) ([src/main.ts](src/main.ts)) | Documentation automatique disponible sur `/api/docs` en développement. |
+### 🔐 Authentication Module
+- **Source**: [`AuthModule`](src/auth/auth.module.ts)
+- **Fonctionnalités**: Register, login, logout, refresh tokens, password reset
+- **Composants clés**: 
+    - [`AuthController`](src/auth/auth.controller.ts) - Gestion des routes
+    - [`AuthService`](src/auth/auth.service.ts) - Logique métier
+    - [`JwtStrategy`](src/auth/jwt.strategy.ts) - Stratégie JWT
 
-Sécurité / authentification :
-- Basée sur **JWT (JSON Web Token)** via [`JwtStrategy`](src/auth/jwt.strategy.ts).
-- Garde d’authentification : [`JwtAuthGuard`](src/auth/jwt-auth.guard.ts).
-- Gestion des rôles : décorateur [`Roles`](src/auth/roles.decorator.ts) et garde [`RolesGuard`](src/auth/roles.guard.ts).
-- Les routes nécessitant un token sont annotées avec `@ApiBearerAuth()` et protégées par les guards.
+### 👥 Users Module
+- **Source**: [`UsersModule`](src/users/users.module.ts)
+- **Fonctionnalités**: CRUD complet, gestion des rôles
+- **Sécurité**: Protection JWT et contrôle par rôles
+- **API**: [`UsersController`](src/users/users.controller.ts)
+
+### 🎮 Matches Module
+- **Source**: [`MatchesModule`](src/matches/matches.module.ts)
+- **Fonctionnalités**: Création/gestion des matchs entre utilisateurs
+- **API**: [`MatchesController`](src/matches/matches.controller.ts)
+
+### 📚 Documentation
+- Interface Swagger interactive sur `/api/docs`
+- Configuration dans [`main.ts`](src/main.ts)
+
+### 🔒 Sécurité
+- Authentification JWT via [`JwtAuthGuard`](src/auth/jwt-auth.guard.ts)
+- Système de rôles avec [`RolesGuard`](src/auth/roles.guard.ts)
+- Routes sécurisées annotées `@ApiBearerAuth()`
 
 ---
 
@@ -80,19 +95,7 @@ La doc Swagger sera disponible sur http://localhost:3000/api/docs en environneme
 
 ## 🧪 Tests
 
-- Lancer les tests unitaires :
-```bash
-npm test
-```
-
-- Lancer les tests end-to-end (e2e) :
-```bash
-npm run test:e2e
-```
-
-Les tests et la configuration jest se trouvent dans [`package.json`](package.json) et [`test/jest-e2e.json`](test/jest-e2e.json).
-
----
+######
 
 ## 📚 Endpoints principaux (récapitulatif)
 
@@ -138,12 +141,6 @@ Matches
 Notes :
 - La gestion des refresh tokens est ici en mémoire (Map) pour simplicité. En production, stocker les refresh tokens de manière persistante (DB, Redis, …).
 - Synchronize=true dans TypeORM (voir [`AppModule`](src/app.module.ts)) permet la création automatique des tables en développement. Pensez à désactiver en production et utiliser des migrations.
-
----
-
-## 🤝 Contribution
-
-Contributions bienvenues. Ouvrez une issue ou une PR pour proposer des améliorations (ex : persistance des refresh tokens, tests supplémentaires, migrations TypeORM).
 
 ---
 
