@@ -7,7 +7,7 @@ import { User } from '../users/user.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Match, User]), // ← inclut User si tu l'utilises
+    TypeOrmModule.forFeature([Match, User]),
   ],
   providers: [MatchesService],
   controllers: [MatchesController],

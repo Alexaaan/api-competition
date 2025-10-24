@@ -66,7 +66,6 @@ export class AuthService {
   async passwordReset(email: string) {
     const user = await this.usersService.findByEmail(email);
     if (!user) return { message: "Aucun utilisateur avec cet email" };
-    // Dans un vrai système, tu enverrais un email ici
     return { message: `Lien de réinitialisation envoyé à ${email}` };
   }
 }

@@ -8,9 +8,9 @@ import { AuthModule } from './auth/auth.module';
   imports: [
     TypeOrmModule.forRoot({
       type: 'sqlite',
-      database: 'competition.db', // fichier DB local
+      database: 'competition.db', 
       autoLoadEntities: true,
-      synchronize: true, // crée automatiquement les tables
+      synchronize: true, 
     }),
     UsersModule,
     MatchesModule,
